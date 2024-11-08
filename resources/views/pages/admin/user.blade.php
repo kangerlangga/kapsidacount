@@ -30,7 +30,7 @@
                 <div class="page-header">
                     <h4 class="page-title">{{ $judul }}</h4>
                     <ul class="breadcrumbs">
-                        <a href="{{ route('user.add') }}" class="btn btn-round text-white ml-auto fw-bold" style="background-color: #feb300">
+                        <a href="{{ route('user.add') }}" class="btn btn-round text-white ml-auto fw-bold" style="background-color: #357e4e">
                             <i class="fa fa-plus-circle mr-1"></i>
                             New Users
                         </a>
@@ -40,7 +40,7 @@
                     @foreach ($DataU as $U)
                     <div class="col-md-4">
                         <div class="card card-profile">
-                            <div class="card-header" style="background-color: #feb300">
+                            <div class="card-header" style="background-color: #357e4e">
                                 <div class="profile-picture">
                                     <div class="avatar avatar-xl">
                                         <img src="{{  url('') }}/assets/admin/img/user.png" alt="..." class="avatar-img rounded-circle" style="background-color: white">
@@ -137,7 +137,7 @@
 
         Swal.fire({
             title: 'The Password for This Account Will Be Reset!',
-            text: "Default = Rambak*Ikaba.90681",
+            text: "Default = Kapsida.CountHS6716",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
