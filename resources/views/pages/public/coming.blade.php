@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" type="image/png" href="https://smartfloed.com/assets/img/logo.png">
+    <link rel="icon" type="image/png" href="{{  url('') }}/assets/logo/logo.png">
 
     <!-- Bootstrap CSS Link -->
     <link rel="stylesheet" href="https://smartfloed.com/coming/dist/css/vendor/bootstrap.min.css">
