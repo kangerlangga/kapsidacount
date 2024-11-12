@@ -34,50 +34,37 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-body">
-                            <form method="POST" action="{{ route('home.store') }}" enctype="multipart/form-data">
+                            <form method="POST" action="{{ route('detect.store') }}" enctype="multipart/form-data">
                                 @csrf
                                 <div class="row">
                                     <div class="col-sm-6">
-                                        <div class="form-group @error('Images') has-error has-feedback @enderror">
-                                            <label for="Images">
-                                                Image Sliders (PNG, JPG, JPEG)
-                                                <span class="d-sm-none"><br></span>
-                                                <span style="color: red;">Max 3 MB</span>
-                                                <span class="d-none d-sm-inline"> | </span>
-                                                <span class="d-sm-none"><br></span>
-                                                Standard Size 1920px x 1080px
-                                            </label>
-											<input type="file" class="form-control-file" id="Images" name="Images" accept=".png, .jpg, .jpeg" required>
-                                            @error('Images')
-                                            <small id="Images" class="form-text text-muted">{{ $message }}</small>
+                                        <div class="form-group @error('Blitzer') has-error has-feedback @enderror">
+                                            <label for="Blitzer">Jumlah Blitzer</label>
+                                            <input type="number" id="Blitzer" name="Blitzer" min="1" value="{{ old('Blitzer') }}" class="form-control" required onchange="calculateDeficiency()">
+                                            @error('Blitzer')
+                                            <small id="Blitzer" class="form-text text-muted">{{ $message }}</small>
                                             @enderror
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
-                                        <div class="form-group @error('Title') has-error has-feedback @enderror">
-                                            <label for="Title">Title</label>
-                                            <input type="text" id="Title" name="Title" value="{{ old('Title') }}" class="form-control" required>
-                                            @error('Title')
-                                            <small id="Title" class="form-text text-muted">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12">
-                                        <div class="form-group @error('Desc') has-error has-feedback @enderror">
-                                            <label for="Desc">Description</label>
-                                            <input type="text" id="Desc" name="Desc" value="{{ old('Desc') }}" class="form-control" required>
-                                            @error('Desc')
-                                            <small id="Desc" class="form-text text-muted">{{ $message }}</small>
+                                        <div class="form-group @error('Capsule') has-error has-feedback @enderror">
+                                            <label for="Capsule">Jumlah Kapsul</label>
+                                            <input type="number" id="Capsule" name="Capsule" min="0" value="{{ old('Capsule') }}" class="form-control" required onchange="calculateDeficiency()">
+                                            @error('Capsule')
+                                            <small id="Capsule" class="form-text text-muted">{{ $message }}</small>
                                             @enderror
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label for="visibility">Visibility</label>
-                                            <select class="form-control" id="visibility" name="visibility">
-                                                <option name='visibility' value='Showing'>Showing (Publish)</option>
-                                                <option name='visibility' value='Hiding'>Hiding (Unpublish)</option>
-                                            </select>
+                                            <label for="Deficiency">Kekurangan Kapsul</label>
+                                            <input type="number" id="Deficiency" name="Deficiency" min="0" class="form-control" value="0" readonly style="cursor: not-allowed">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label for="Status">Keterangan</label>
+                                            <input type="text" id="Status" name="Status" class="form-control" value="Sempurna" readonly style="cursor: not-allowed">
                                         </div>
                                     </div>
                                     <div class="col-sm-12 mt-1">
@@ -103,7 +90,6 @@
 </div>
 @include('layouts.admin.script')
 <script>
-    //message with sweetalert
     @if(session('success'))
     Swal.fire({
         icon: "success",
@@ -119,6 +105,17 @@
         timer: 3000
     });
     @endif
+
+    function calculateDeficiency() {
+        const blitzer = document.getElementById('Blitzer').value || 0;
+        const capsuleInput = document.getElementById('Capsule');
+        const requiredCapsules = blitzer * 12;
+        const capsule = capsuleInput.value || 0;
+        const deficiency = requiredCapsules - capsule;
+        capsuleInput.max = requiredCapsules;
+        document.getElementById('Deficiency').value = deficiency > 0 ? deficiency : 0;
+        document.getElementById('Status').value = deficiency > 0 ? "Cacat" : "Sempurna";
+    }
 </script>
 @endsection
 

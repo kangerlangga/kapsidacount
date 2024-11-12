@@ -15,11 +15,23 @@ class AdminController extends Controller
     {
         $now = time();
         $fiveMinutesAgo = $now - 300;
+        $detections = Detection::latest()->get();
+        $uniqueDates = $detections->pluck('created_at')
+            ->map(function ($date) {
+                return $date->format('Y-m-d');
+            })
+            ->unique()
+            ->sortByDesc(function ($date) {
+                return $date;
+            })
+            ->take(12);
         $data = [
             'judul' => 'Dashboard',
             'cVO' => DB::table('sessions')->where('last_activity', '>=', $fiveMinutesAgo)->count(),
             'cP' => Detection::count(),
+            'cT' => $uniqueDates->count(),
             'cK' => Detection::where('kekurangan', '>', 0)->count(),
+            'sK' => Detection::where('kekurangan', '>', 0)->sum('kekurangan'),
         ];
         return view('pages.admin.dashboard', $data);
     }

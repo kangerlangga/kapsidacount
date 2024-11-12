@@ -44,6 +44,12 @@
                         <p>Dashboard</p>
                     </a>
                 </li>
+                <li class="nav-item {{ Request::is('admin/detect*') ? 'active' : '' }}">
+                    <a href="{{ route('detect.data') }}">
+                        <i class="fab fa-medrt"></i>
+                        <p>Detection</p>
+                    </a>
+                </li>
                 @if (Auth::user()->level == 'Super Admin')
                 <li class="nav-item {{ Request::is('admin/user*') ? 'active' : '' }}">
                     <a href="{{ route('user.data') }}">

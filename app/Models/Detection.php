@@ -14,9 +14,23 @@ class Detection extends Model
     protected $table = 'detections';
 
     /**
+     * The primary key associated with the table.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'id_detections';
+
+    /**
+     * Indicates if the model's ID is auto-incrementing.
+     *
+     * @var bool
+     */
+    public $incrementing = false;
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['kekurangan','keterangan','created_by','modified_by'];
+    protected $fillable = ['id_detections','blitzer','kapsul','kekurangan','keterangan','created_by','modified_by'];
 }

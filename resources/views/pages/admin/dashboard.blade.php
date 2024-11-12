@@ -53,7 +53,7 @@
                                     <div class="col col-stats ml-3 ml-sm-0">
                                         <div class="numbers">
                                             <p class="card-category">Total Kekurangan</p>
-                                            <h4 class="card-title">{{ $cK }} Kapsul</h4>
+                                            <h4 class="card-title">{{ $sK }} Kapsul</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -79,7 +79,7 @@
                             </div>
                         </div>
                     </div>
-                    <?php if ($cK > 0) : ?>
+                    @if ($cP >= 7)
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
@@ -92,8 +92,8 @@
                             </div>
                         </div>
                     </div>
-                    <?php endif;?>
-                    <?php if ($cK > 0) : ?>
+                    @endif
+                    @if ($cP >= 7)
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
@@ -106,7 +106,7 @@
                             </div>
                         </div>
                     </div>
-                    <?php endif;?>
+                    @endif
                     @if (Auth::user()->level == 'Super Admin')
                     <div class="col-md-4">
                         <div class="card text-white" style="background: linear-gradient(to bottom right, #357e4e, #2b653f);">
@@ -154,71 +154,102 @@
 </script>
 @include('layouts.admin.script')
 <script>
-    var obatStatistics = document.getElementById('obatStatistics').getContext('2d'),
-    summaryChart = document.getElementById('summaryChart').getContext('2d');
+    @if ($cP >= 7)
+    var obatStatistics = document.getElementById('obatStatistics').getContext('2d');
+    @endif
+    @if ($cT >= 7)
+    var summaryChart = document.getElementById('summaryChart').getContext('2d');
+    @endif
 
-    var myObatChart = new Chart(obatStatistics, {
-        type: 'bar',
-        data: {
-            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-            datasets : [{
-                label: "Kekurangan Kapsul",
-                backgroundColor: '#cd030c',
-                borderColor: '#cd030c',
-                data: [3, 2, 9, 5, 4, 6, 4, 6, 7, 8, 7, 4],
-            }],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero:true
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('{{ route('kekurangan.data') }}')
+            .then(response => response.json())
+            .then(data => {
+                var deficiencies = data.deficiencies.reverse();
+                var createdAt = data.createdAt.reverse();
+                var formattedDates = createdAt.map(function(date) {
+                    var parsedDate = new Date(date);
+                    var month = parsedDate.toLocaleString('default', { month: 'short' });
+                    var day = parsedDate.getDate();
+                    var hours = parsedDate.getHours();
+                    var minutes = parsedDate.getMinutes().toString().padStart(2, '0');
+                    return `${day} ${month} (${hours}:${minutes})`;
+                });
+                var myObatChart = new Chart(obatStatistics, {
+                    type: 'bar',
+                    data: {
+                        labels: formattedDates,
+                        datasets : [{
+                            label: "Kekurangan Kapsul",
+                            backgroundColor: '#cd030c',
+                            borderColor: '#cd030c',
+                            data: deficiencies,
+                        }],
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero:true
+                                }
+                            }]
+                        },
                     }
-                }]
-            },
-        }
+                });
+            })
+        .catch(error => console.error('Error fetching data:', error));
     });
 
-    var mySummaryChart = new Chart(summaryChart, {
-        type: 'bar',
-        data: {
-            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-            datasets : [{
-                label: "Sempurna",
-                backgroundColor: '#285b3a',
-                borderColor: '#285b3a',
-                data: [30, 45, 22, 41, 54, 59, 78, 56, 88, 90, 21, 45],
-            },{
-                label: "Cacat",
-                backgroundColor: '#cd030c',
-                borderColor: '#cd030c',
-                data: [3, 2, 9, 5, 4, 6, 4, 6, 7, 8, 7, 4],
-            }],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            legend: {
-                position : 'bottom'
-            },
-            tooltips: {
-                mode: 'index',
-                intersect: false
-            },
-            responsive: true,
-            scales: {
-                xAxes: [{
-                    stacked: true,
-                }],
-                yAxes: [{
-                    stacked: true
-                }]
-            }
-        }
-    });
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('{{ route('pengukuran.data') }}')
+            .then(response => response.json())
+            .then(data => {
+                var dates = data.dates;
+                var perfectData = data.perfect;
+                var defectiveData = data.defective;
 
+                var mySummaryChart = new Chart(summaryChart, {
+                    type: 'bar',
+                    data: {
+                        labels: dates,
+                        datasets : [{
+                            label: "Sempurna",
+                            backgroundColor: '#285b3a',
+                            borderColor: '#285b3a',
+                            data: perfectData,
+                        },{
+                            label: "Cacat",
+                            backgroundColor: '#cd030c',
+                            borderColor: '#cd030c',
+                            data: defectiveData,
+                        }],
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        legend: {
+                            position : 'bottom'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        responsive: true,
+                        scales: {
+                            xAxes: [{
+                                stacked: true,
+                            }],
+                            yAxes: [{
+                                stacked: true
+                            }]
+                        }
+                    }
+                });
+            })
+        .catch(error => console.error('Error fetching data:', error));
+    });
 </script>
 @endsection
 

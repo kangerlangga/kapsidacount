@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\DetectionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublikController;
 use App\Http\Controllers\UserController;
@@ -22,6 +23,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/admin/profile/updateProfile', [AdminController::class, 'updateProf'])->name('prof.update');
     Route::get('/admin/profile/editPass', [AdminController::class, 'editPass'])->name('prof.edit.pass');
     Route::post('/admin/profile/updatePass', [AdminController::class, 'updatePass'])->name('prof.update.pass');
+
+    Route::get('/admin/detect', [DetectionController::class, 'index'])->name('detect.data');
+    Route::get('/admin/detect/add', [DetectionController::class, 'create'])->name('detect.add');
+    Route::post('/admin/detect/store', [DetectionController::class, 'store'])->name('detect.store');
+    Route::get('/admin/detect/edit/{id}', [DetectionController::class, 'edit'])->name('detect.edit');
+    Route::post('/admin/detect/update/{id}', [DetectionController::class, 'update'])->name('detect.update');
+    Route::get('/admin/detect/delete/{id}', [DetectionController::class, 'destroy'])->name('detect.delete');
+
+    Route::get('/admin/detect/datakurang', [DetectionController::class, 'getDetections'])->name('kekurangan.data');
+    Route::get('/admin/detect/datasemua', [DetectionController::class, 'getSummaryData'])->name('pengukuran.data');
 
     Route::get('/admin/user', [UserController::class, 'index'])->name('user.data');
     Route::get('/admin/user/add', [UserController::class, 'create'])->name('user.add');

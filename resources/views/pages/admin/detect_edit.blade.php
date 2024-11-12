@@ -34,50 +34,37 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-body">
-                            <form method="POST" action="{{ route('home.update', $EditHomeS->id_home_sliders) }}" enctype="multipart/form-data">
+                            <form method="POST" action="{{ route('detect.update', $EditDetection->id_detections) }}" enctype="multipart/form-data">
                                 @csrf
                                 <div class="row">
                                     <div class="col-sm-6">
-                                        <div class="form-group @error('Images') has-error has-feedback @enderror">
-                                            <label for="Images">
-                                                Image Sliders (PNG, JPG, JPEG)
-                                                <span class="d-sm-none"><br></span>
-                                                <span style="color: red;">Max 3 MB</span>
-                                                <span class="d-none d-sm-inline"> | </span>
-                                                <span class="d-sm-none"><br></span>
-                                                Standard Size 1920px x 1080px
-                                            </label>
-											<input type="file" class="form-control-file" id="Images" name="Images" accept=".png, .jpg, .jpeg">
-                                            @error('Images')
-                                            <small id="Images" class="form-text text-muted">{{ $message }}</small>
+                                        <div class="form-group @error('Blitzer') has-error has-feedback @enderror">
+                                            <label for="Blitzer">Jumlah Blitzer</label>
+                                            <input type="number" id="Blitzer" name="Blitzer" min="1" value="{{ old('Blitzer', $EditDetection->blitzer) }}" class="form-control" required onchange="calculateDeficiency()">
+                                            @error('Blitzer')
+                                            <small id="Blitzer" class="form-text text-muted">{{ $message }}</small>
                                             @enderror
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
-                                        <div class="form-group @error('Title') has-error has-feedback @enderror">
-                                            <label for="Title">Title</label>
-                                            <input type="text" id="Title" name="Title" value="{{ old('Title', $EditHomeS->title_home_sliders) }}" class="form-control" required>
-                                            @error('Title')
-                                            <small id="Title" class="form-text text-muted">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12">
-                                        <div class="form-group @error('Desc') has-error has-feedback @enderror">
-                                            <label for="Desc">Description</label>
-                                            <input type="text" id="Desc" name="Desc" value="{{ old('Desc', $EditHomeS->desc_home_sliders) }}" class="form-control" required>
-                                            @error('Desc')
-                                            <small id="Desc" class="form-text text-muted">{{ $message }}</small>
+                                        <div class="form-group @error('Capsule') has-error has-feedback @enderror">
+                                            <label for="Capsule">Jumlah Kapsul</label>
+                                            <input type="number" id="Capsule" name="Capsule" min="0" value="{{ old('Capsule', $EditDetection->kapsul) }}" class="form-control" required onchange="calculateDeficiency()">
+                                            @error('Capsule')
+                                            <small id="Capsule" class="form-text text-muted">{{ $message }}</small>
                                             @enderror
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label for="visibility">Visibility</label>
-                                            <select class="form-control" id="visibility" name="visibility">
-                                                <option name='visibility' value='Showing' {{ $EditHomeS->visib_home_sliders == 'Showing' ? 'selected' : '' }}>Showing (Publish)</option>
-                                                <option name='visibility' value='Hiding' {{ $EditHomeS->visib_home_sliders == 'Hiding' ? 'selected' : '' }}>Hiding (Unpublish)</option>
-                                            </select>
+                                            <label for="Deficiency">Kekurangan Kapsul</label>
+                                            <input type="number" id="Deficiency" name="Deficiency" min="0" class="form-control" value="{{ $EditDetection->kekurangan }}" readonly style="cursor: not-allowed">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label for="Status">Keterangan</label>
+                                            <input type="text" id="Status" name="Status" class="form-control" value="{{ $EditDetection->keterangan }}" readonly style="cursor: not-allowed">
                                         </div>
                                     </div>
                                     <div class="col-sm-12 mt-1">
@@ -85,7 +72,7 @@
                                             <button type="submit" class="btn btn-success fw-bold text-uppercase">
                                                 <i class="fas fa-save mr-2"></i>Save
                                             </button>
-                                            <a href="{{ route('home.data') }}" class="btn btn-warning fw-bold text-uppercase but-back">
+                                            <a href="{{ route('detect.data') }}" class="btn btn-warning fw-bold text-uppercase but-back">
                                                 <i class="fas fa-chevron-circle-left mr-2"></i>Back
                                             </a>
                                         </div>
@@ -123,6 +110,17 @@
             }
         });
     });
+
+    function calculateDeficiency() {
+        const blitzer = document.getElementById('Blitzer').value || 0;
+        const capsuleInput = document.getElementById('Capsule');
+        const requiredCapsules = blitzer * 12;
+        const capsule = capsuleInput.value || 0;
+        const deficiency = requiredCapsules - capsule;
+        capsuleInput.max = requiredCapsules;
+        document.getElementById('Deficiency').value = deficiency > 0 ? deficiency : 0;
+        document.getElementById('Status').value = deficiency > 0 ? "Cacat" : "Sempurna";
+    }
 </script>
 @endsection
 
